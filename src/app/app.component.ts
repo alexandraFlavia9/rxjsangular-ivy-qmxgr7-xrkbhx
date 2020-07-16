@@ -1,5 +1,5 @@
 import { Component, VERSION } from '@angular/core';
-import { interval , Subject} from 'rxjs';
+import { interval , Subject, Observable, fromEvent } from 'rxjs';
 import {switchMap, map, take, takeUntil} from 'rxjs/operators';
 import {OnDestroy} from '@angular/core';
 
@@ -11,6 +11,8 @@ import {OnDestroy} from '@angular/core';
 export class AppComponent implements OnDestroy {
   name = 'Angular ' + VERSION.major;
   private destroy$ = new Subject();
+  clickObservable$: Observable<Event> = fromEvent(document,'click');
+
   constructor() {
     this.testSwitchMap()
   }
@@ -19,12 +21,16 @@ export class AppComponent implements OnDestroy {
   /* Whenever a new value is emmited by the source observable, 
   the inner obs will be unsubribed and newly subscribed */
   public testSwitchMap() {
-    const s1$ = interval(6000).pipe((map(ev => console.log("f" + ev))), take (7), takeUntil(this.destroy$));
-    const s2$ = interval(1000).pipe((map(ev => console.log("s" + ev))), take (10), takeUntil(this.destroy$));
+    // const s1$ = interval(6000).pipe((map(ev => console.log("f" + ev))), take (7), takeUntil(this.destroy$));
+    const s2$ = interval(3000).pipe((map(ev => console.log("s" + ev))), take (10), takeUntil(this.destroy$));
 
-     s1$.pipe(switchMap(sourceValue => {
+     this.clickObservable$
+     .pipe(
+       switchMap(sourceValue => {
         return s2$;
-    })).subscribe();
+      }), 
+      takeUntil(this.destroy$))
+      .subscribe();
   }
 
 
