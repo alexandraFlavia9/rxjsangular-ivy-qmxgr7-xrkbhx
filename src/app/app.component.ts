@@ -1,6 +1,6 @@
 import { Component, VERSION } from '@angular/core';
 import { interval , Subject, Observable, fromEvent } from 'rxjs';
-import {switchMap, map, take, takeUntil} from 'rxjs/operators';
+import {switchMap,concatMap, map, take, takeUntil} from 'rxjs/operators';
 import {OnDestroy} from '@angular/core';
 
 @Component({
@@ -27,6 +27,18 @@ export class AppComponent implements OnDestroy {
      this.clickObservable$
      .pipe(
        switchMap(sourceValue => {
+        return s2$;
+      }), 
+      takeUntil(this.destroy$))
+      .subscribe();
+  }
+
+  public testConcathMap() {
+    const s2$ = interval(3000).pipe((map(ev => console.log("s" + ev))), take (10), takeUntil(this.destroy$));
+
+     this.clickObservable$
+     .pipe(
+       concatMap(sourceValue => {
         return s2$;
       }), 
       takeUntil(this.destroy$))
