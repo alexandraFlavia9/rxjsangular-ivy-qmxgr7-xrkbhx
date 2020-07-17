@@ -22,7 +22,7 @@ export class AppComponent implements OnDestroy {
   the inner obs will be unsubribed and newly subscribed */
   public testSwitchMap() {
     // const s1$ = interval(6000).pipe((map(ev => console.log("f" + ev))), take (7), takeUntil(this.destroy$));
-    const s2$ = interval(3000).pipe((map(ev => console.log("s" + ev))), take (10), takeUntil(this.destroy$));
+    const s2$ = interval(3000).pipe((map(ev => console.log("switch" + ev))), take (10), takeUntil(this.destroy$));
 
      this.clickObservable$
      .pipe(
@@ -34,7 +34,7 @@ export class AppComponent implements OnDestroy {
   }
 
   public testConcathMap() {
-    const s2$ = interval(3000).pipe((map(ev => console.log("s" + ev))), take (10), takeUntil(this.destroy$));
+    const s2$ = interval(3000).pipe((map(ev => console.log("concat" + ev))), take (10), takeUntil(this.destroy$));
 
      this.clickObservable$
      .pipe(
@@ -47,7 +47,7 @@ export class AppComponent implements OnDestroy {
 
 
     public testMergeMap() {
-    const s2$ = interval(3000).pipe((map(ev => console.log("s" + ev))), take (10), takeUntil(this.destroy$));
+    const s2$ = interval(3000).pipe((map(ev => console.log("merge" + ev))), take (10), takeUntil(this.destroy$));
 
      this.clickObservable$
      .pipe(
