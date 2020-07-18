@@ -1,6 +1,6 @@
 import { Component, VERSION } from '@angular/core';
 import { interval , Subject, Observable, fromEvent } from 'rxjs';
-import {switchMap,concatMap,mergeMap,  map, take, takeUntil} from 'rxjs/operators';
+import {switchMap,concatMap,mergeMap,exhaustMap,  map, take, takeUntil, timeout} from 'rxjs/operators';
 import {OnDestroy} from '@angular/core';
 
 @Component({
@@ -13,8 +13,12 @@ export class AppComponent implements OnDestroy {
   private destroy$ = new Subject();
   clickObservable$: Observable<Event> = fromEvent(document,'click');
 
+  color$ = new Subject();
+  logo$ = new Subject();
+
   constructor() {
-    this.testSwitchMap()
+    //this.generateTShirts();
+    // this.testExhaustMap()
   }
 
 
@@ -32,8 +36,9 @@ export class AppComponent implements OnDestroy {
       takeUntil(this.destroy$))
       .subscribe();
   }
-
-  public testConcathMap() {
+  
+  /* Everything is about order. As long as the inner observable hasn't finished, the source obs emitted value will wait */
+  public testConcatMap() {
     const s2$ = interval(3000).pipe((map(ev => console.log("concat" + ev))), take (10), takeUntil(this.destroy$));
 
      this.clickObservable$
@@ -46,7 +51,7 @@ export class AppComponent implements OnDestroy {
   }
 
 
-    public testMergeMap() {
+  public testMergeMap() {
     const s2$ = interval(3000).pipe((map(ev => console.log("merge" + ev))), take (10), takeUntil(this.destroy$));
 
      this.clickObservable$
@@ -58,6 +63,12 @@ export class AppComponent implements OnDestroy {
       .subscribe();
   }
 
+  /* Inner observable has to complete in order to start with another execution. Clicks that occur during execution of the previous inner obs, wont't be taken into consideration. */
+  public testExhaustMap() {
+     this.clickObservable$.pipe(
+      exhaustMap(ev => interval(1000).pipe(take(5)))
+    ).subscribe(x => console.log(x));
+  }
 
   ngOnDestroy() {
       this.destroy$.next();

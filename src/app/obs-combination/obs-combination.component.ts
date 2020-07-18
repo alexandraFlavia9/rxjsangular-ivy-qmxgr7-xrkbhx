@@ -15,8 +15,8 @@ export class ObsCombinationComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    this.testForkJoin();
-    this.generateTShirts();
+    //this.testForkJoin();
+    //this.generateTShirts();
   }
 
   /*
