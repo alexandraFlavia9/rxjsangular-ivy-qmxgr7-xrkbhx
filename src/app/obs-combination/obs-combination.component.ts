@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {Subject, zip, interval} from 'rxjs';
+import {Subject, zip, combineLatest, interval} from 'rxjs';
 
 @Component({
   selector: 'app-obs-combination',
@@ -14,8 +14,8 @@ export class ObsCombinationComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    //this.testZip();
-    //this.generateTShirts();
+    // this.testCombineLatest();
+    // this.generateTShirts();
   }
 
   /*
@@ -26,6 +26,13 @@ export class ObsCombinationComponent implements OnInit {
   */
   testZip() {
     zip(this.logo$, this.color$).subscribe(([logo, color]) => console.log(logo + ' with ' + color ))
+  }
+
+  /*
+    Once each source emits one value, the obs won't wait one for another. The combination will be done with the latest emitted value from each source.
+  */
+  testCombineLatest() {
+    combineLatest(this.logo$, this.color$).subscribe(([logo, color]) => console.log(logo + ' with ' + color ))
   }
 
   generateTShirts() {
