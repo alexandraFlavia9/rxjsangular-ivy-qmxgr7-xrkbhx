@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import {Subject, zip, combineLatest, interval} from 'rxjs';
+import {Subject, zip, combineLatest, forkJoin, interval} from 'rxjs';
+import {withLatestFrom} from 'rxjs/operators';
 
 @Component({
   selector: 'app-obs-combination',
@@ -14,8 +15,8 @@ export class ObsCombinationComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    // this.testCombineLatest();
-    // this.generateTShirts();
+    this.testForkJoin();
+    this.generateTShirts();
   }
 
   /*
@@ -35,16 +36,34 @@ export class ObsCombinationComponent implements OnInit {
     combineLatest(this.logo$, this.color$).subscribe(([logo, color]) => console.log(logo + ' with ' + color ))
   }
 
+  /* There is a master slave relationship. Color, which is the master. will dictate when the console log happens. At start, it will wait till logo emits, but after that whenever the color change, the computation will take place.  */
+  testWithLatestFrom() {
+    this.color$.pipe(withLatestFrom(this.logo$)).subscribe(([logo, color]) => console.log(logo + ' with ' + color ))
+  }
+
+  /* The computation will occur after both observables are completed */
+  testForkJoin() {
+    forkJoin(this.logo$, this.color$).subscribe(([logo, color]) => console.log(logo + ' with ' + color ))
+  }
+
   generateTShirts() {
-    interval(6000).subscribe((nr) => {
+    const i1 = interval(6000);
+    const i2 =interval(10000);
+    i1.subscribe((nr) => {
       console.log('color ' + nr);
       this.color$.next('color'+ nr)
       });
 
-    interval(10000).subscribe((nr) => {
+    i2.subscribe((nr) => {
        console.log('logo ' + nr);
       this.logo$.next('logo' + nr)
     });
+
+
+    /*interval(30000).subscribe((nr) => {
+      this.color$.complete();
+      this.logo$.complete();
+    });*/
   }
 
 }
